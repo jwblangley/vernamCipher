@@ -24,56 +24,8 @@ public class FileCrypt extends Application {
   static final int WIDTH  = Toolkit.getDefaultToolkit().getScreenSize().width;
   static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
 
-
   public static void main(String[] args) {
-
-    System.out.println(WIDTH);
-
     launch(args);
-
-    /*
-    JFrame.setDefaultLookAndFeelDecorated(true);
-    JFrame frame = new JFrame("FileCrypt");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    totalGUI.setPreferredSize(new Dimension((int) (WIDTH * 0.3), (int) (HEIGHT * 0.2)));
-    totalGUI.setLayout(new BorderLayout());
-
-    JTextField keyField = new JTextField();
-    keyField.setHorizontalAlignment(JTextField.CENTER);
-    keyField.setPreferredSize(new Dimension((int) (WIDTH * 0.25), (int) (HEIGHT * 0.05)));
-    keyField.setLocation(25, 15);
-    totalGUI.add(keyField, BorderLayout.PAGE_START);
-
-    statusLabel.setHorizontalAlignment(JLabel.CENTER);
-    statusLabel.setFont(new Font("Calibri", Font.PLAIN, HEIGHT / 30));
-    statusLabel.setPreferredSize(new Dimension((int) (WIDTH * 0.25), (int) (HEIGHT * 0.05)));
-    totalGUI.add(statusLabel, BorderLayout.CENTER);
-
-    JButton encryptButton = new JButton("Calculate");
-    encryptButton.setPreferredSize(new Dimension((int) (WIDTH * 0.25), (int) (HEIGHT * 0.05)));
-    encryptButton.addActionListener(e -> {
-      if (!keyField.getText().equals("")) {
-        statusLabel.setText("WORKING...");
-        JFileChooser jfc = new JFileChooser();
-        int returnVal = jfc.showOpenDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-          statusLabel.setText((crypt(jfc.getSelectedFile()
-              .getAbsolutePath(), keyField.getText())) ? "DONE"
-              : "ERROR");
-        }
-      } else {
-        statusLabel.setText("EMPTY KEY");
-      }
-    });
-    totalGUI.add(encryptButton, BorderLayout.PAGE_END);
-
-    frame.add(totalGUI);
-    frame.setVisible(true);
-    frame.pack();
-    frame.setLocationRelativeTo(null);
-
-    */
-
   }
 
   static boolean crypt(String pathString, String key) {
@@ -84,29 +36,26 @@ public class FileCrypt extends Application {
       byte[] cryptArray = new byte[fileArray.length];
       //Manipulate array here
       //Parallel stream for performance
-      IntStream pCalcstream = IntStream.range(0, fileArray.length).parallel()
+      IntStream calcStream = IntStream.range(0, fileArray.length).parallel()
           .map(i -> fileArray[i] ^ key.getBytes()[i % key.getBytes().length]);
 
-      int[] streamOutArray = pCalcstream.toArray();
+      int[] streamOutArray = calcStream.toArray();
       for (int i = 0; i < streamOutArray.length; i++) {
         cryptArray[i] = (byte) streamOutArray[i];
 
       }
 
-			/*
-			for (int i = 0; i < fileArray.length; i++) {
-				byte fileByte = fileArray[i];
-				cryptArray[i]=(byte) (fileByte^key.getBytes()[i%key.getBytes().length]);
-			}
-			*/
 
+      // Change filename to indicate encryption
       Pattern p = Pattern.compile("^\\[(.+)\\]\\..+$");
       Matcher m = p.matcher(path.getFileName().toString());
 
       String newFileNameNoExt;
-      if (m.find()) { //encrypted
+      if (m.find()) {
+        // Encrypted
         newFileNameNoExt = m.group(1);
-      } else { //not encrypted
+      } else {
+        // Not encrypted
         newFileNameNoExt = "[" + path.getFileName().toString().split("\\.")[0] + "]";
       }
 
@@ -114,9 +63,12 @@ public class FileCrypt extends Application {
       m = p.matcher(path.getFileName().toString());
       m.matches();
       String ext = m.group(1);
+      String newFilePath = path.getParent() + "/" + newFileNameNoExt + "." + ext;
 
-      String newFilePath = path.getParent() + "\\" + newFileNameNoExt + "." + ext;
+      // Ensure forward slash for OS compatibility
+      newFilePath = newFilePath.replace("\\", "/");
 
+      // Write out to new file
       FileOutputStream stream = new FileOutputStream(newFilePath);
       stream.write(cryptArray);
       stream.close();
@@ -134,7 +86,7 @@ public class FileCrypt extends Application {
     stage.setTitle("File Encryption");
 
     BorderPane layout = new BorderPane();
-    layout.setPadding(new Insets(0,0,10,0));
+    layout.setPadding(new Insets(0, 0, 10, 0));
 
     Font font = new Font("Arial", HEIGHT / 35);
 
