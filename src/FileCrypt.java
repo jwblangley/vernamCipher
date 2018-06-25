@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
@@ -8,18 +7,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javax.swing.JFileChooser;
 
 public class FileCrypt extends Application {
 
-  static Label statusLabel = new Label("READY");
+  static Label statusLabel = new Label("Ready");
   static final int WIDTH  = Toolkit.getDefaultToolkit().getScreenSize().width;
   static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
 
@@ -133,15 +134,39 @@ public class FileCrypt extends Application {
     stage.setTitle("File Encryption");
 
     BorderPane layout = new BorderPane();
+    layout.setPadding(new Insets(0,0,10,0));
 
-    statusLabel.setFont(Font.font("Verdana", HEIGHT / 30d));
+    Font font = new Font("Arial", HEIGHT / 35);
+
+    statusLabel.setFont(font);
     layout.setBottom(statusLabel);
     BorderPane.setAlignment(statusLabel, Pos.CENTER);
 
-    System.out.println(statusLabel.getWidth());
+    TextField keyField = new TextField();
+    keyField.setFont(font);
+    layout.setTop(keyField);
+    BorderPane.setAlignment(statusLabel, Pos.CENTER);
+
+    Button cryptButton = new Button("Calculate");
+    cryptButton.setFont(font);
+    cryptButton.setOnAction(actionEvent -> {
+      if (!keyField.getText().equals("")) {
+        statusLabel.setText("Working...");
+        JFileChooser jfc = new JFileChooser();
+        if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+          statusLabel.setText((crypt(jfc.getSelectedFile()
+              .getAbsolutePath(), keyField.getText())) ? "Done"
+              : "Error");
+        }
+      } else {
+        statusLabel.setText("Empty key");
+      }
+    });
+    layout.setCenter(cryptButton);
 
     Scene scene = new Scene(layout, WIDTH * 0.3, HEIGHT * 0.2);
     stage.setScene(scene);
+    stage.centerOnScreen();
     stage.show();
 
   }
