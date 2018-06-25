@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -94,6 +95,8 @@ public class FileCrypt extends Application {
     BorderPane.setAlignment(statusLabel, Pos.CENTER);
 
     TextField keyField = new TextField();
+    keyField.setPromptText("Enter Password");
+    keyField.setAlignment(Pos.CENTER);
     keyField.setFont(font);
     layout.setTop(keyField);
     BorderPane.setAlignment(statusLabel, Pos.CENTER);
