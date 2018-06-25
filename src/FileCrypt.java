@@ -87,7 +87,6 @@ public class FileCrypt extends Application {
     stage.setTitle("File Encryption");
 
     BorderPane layout = new BorderPane();
-    layout.setPadding(new Insets(0, 0, 10, 0));
 
     Font font = new Font("Arial", HEIGHT / 35);
 
@@ -119,7 +118,9 @@ public class FileCrypt extends Application {
         statusLabel.setText("Empty key");
       }
     });
+    cryptButton.setMaxWidth(Double.MAX_VALUE);
     layout.setBottom(cryptButton);
+
 
     Scene scene = new Scene(layout, WIDTH * 0.3, HEIGHT * 0.2);
     stage.setScene(scene);
