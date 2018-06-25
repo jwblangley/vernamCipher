@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,13 +17,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javax.swing.JFileChooser;
 
 public class FileCrypt extends Application {
 
-  static Label statusLabel = new Label("Ready");
   static final int WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
   static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
+
+  static Label statusLabel = new Label("Ready");
 
   public static void main(String[] args) {
     launch(args);
@@ -83,7 +82,7 @@ public class FileCrypt extends Application {
   }
 
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage stage) {
     stage.setTitle("File Encryption");
 
     BorderPane layout = new BorderPane();
@@ -101,6 +100,7 @@ public class FileCrypt extends Application {
 
     Button cryptButton = new Button("Calculate");
     cryptButton.setFont(font);
+    cryptButton.setMaxWidth(Double.MAX_VALUE); // Fill width
     cryptButton.setOnAction(actionEvent -> {
       if (!keyField.getText().equals("")) {
         statusLabel.setText("Working...");
@@ -118,7 +118,6 @@ public class FileCrypt extends Application {
         statusLabel.setText("Empty key");
       }
     });
-    cryptButton.setMaxWidth(Double.MAX_VALUE);
     layout.setBottom(cryptButton);
 
 
