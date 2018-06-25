@@ -1,4 +1,5 @@
 import java.awt.Toolkit;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,13 +16,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.swing.JFileChooser;
 
 public class FileCrypt extends Application {
 
   static Label statusLabel = new Label("Ready");
-  static final int WIDTH  = Toolkit.getDefaultToolkit().getScreenSize().width;
+  static final int WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
   static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
 
   public static void main(String[] args) {
@@ -44,7 +46,6 @@ public class FileCrypt extends Application {
         cryptArray[i] = (byte) streamOutArray[i];
 
       }
-
 
       // Change filename to indicate encryption
       Pattern p = Pattern.compile("^\\[(.+)\\]\\..+$");
@@ -91,7 +92,7 @@ public class FileCrypt extends Application {
     Font font = new Font("Arial", HEIGHT / 35);
 
     statusLabel.setFont(font);
-    layout.setBottom(statusLabel);
+    layout.setCenter(statusLabel);
     BorderPane.setAlignment(statusLabel, Pos.CENTER);
 
     TextField keyField = new TextField();
@@ -104,17 +105,21 @@ public class FileCrypt extends Application {
     cryptButton.setOnAction(actionEvent -> {
       if (!keyField.getText().equals("")) {
         statusLabel.setText("Working...");
-        JFileChooser jfc = new JFileChooser();
-        if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-          statusLabel.setText((crypt(jfc.getSelectedFile()
-              .getAbsolutePath(), keyField.getText())) ? "Done"
-              : "Error");
+
+        FileChooser fc = new FileChooser();
+        fc.setTitle("File for encryption/decryption");
+        File file = fc.showOpenDialog(stage);
+        if (file != null) {
+          statusLabel.setText((crypt(file.getAbsolutePath(), keyField.getText()))
+              ? "Done" : "Error");
+        } else {
+          statusLabel.setText("Cancelled");
         }
       } else {
         statusLabel.setText("Empty key");
       }
     });
-    layout.setCenter(cryptButton);
+    layout.setBottom(cryptButton);
 
     Scene scene = new Scene(layout, WIDTH * 0.3, HEIGHT * 0.2);
     stage.setScene(scene);
